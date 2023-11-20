@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WS6</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/5.2.2/mqtt.min.js"
+        integrity="sha512-I8gBERqrEkyDqbjHj3aymzBVIPFs85vGSzy26+1P5weHzFp8vfJ8dARJz51n3oQ80DTdYn8MbhUiz5UAW2rMxw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <style>
+        body {
+            text-align: center;
+        }
+
+        input[type='submit'] {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            width: 150px;
+            margin: 10px auto;
+        }
+
+        input[type='submit']:hover {
+            background-color: #45a049;
+        }
+
+        #turnOffButton {
+            background-color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h1>WS6</h1>
+        <p>LED Status: <span id="ledStatus" style="color: green;">On</span></p>
+        <form id="turnOnForm">
+            <input type="submit" value="Turn On">
+        </form>
+        <form id="turnOffForm">
+            <input type="submit" id="turnOffButton" value="Turn Off">
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ledStatusSpan = document.getElementById('ledStatus');
+            const turnOnForm = document.getElementById('turnOnForm');
+            const turnOffForm = document.getElementById('turnOffForm');
+
+            const client = mqtt.connect("mqtt://192.168.2.41:9001");
+
+
+            turnOnForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                client.publish("led", "on");
+                updateLedStatus('On', 'green');
+            });
+
+            turnOffForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                client.publish("led", "off");
+                updateLedStatus('Off', 'red');
+            });
+
+
+            function updateLedStatus(statusText, color) {
+                ledStatusSpan.style.color = color;
+                ledStatusSpan.textContent = statusText;
+            }
+        });
+
+    </script>
+</body>
+
+</html>
